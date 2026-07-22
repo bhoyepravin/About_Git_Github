@@ -2,59 +2,53 @@
 
 This project uses Supabase as the backend database.
 
-## Step 1: Create a Supabase Account
+---
+
+# Step 1: Create a Supabase Account
 
 1. Go to https://supabase.com
 2. Sign up or log in.
 3. Click **New Project**.
 4. Enter:
-   - Organization
+   - Organization Name
    - Project Name
-   - Database Password
+   - Database Password (Save this password securely. It will be required later.)
    - Region
 5. Click **Create Project**.
-6. Wait until the project is fully provisioned.
+6. Wait until the project status changes to **Healthy**.
 
 ---
 
-## Step 2: Open Project Settings
+# Step 2: Get the Supabase API Keys
 
-1. Open your Supabase project.
-2. From the left sidebar click:
+1. Open your project.
+2. Go to:
 
+```
 Settings → API Keys
+```
+
+3. Copy the **Publishable Key**.
+
+It looks similar to:
+
+```
+sb_publishable_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+This key is used in frontend applications.
 
 ---
 
-## Step 3: Copy the Publishable API Key
-
-Under **Publishable key**
-
-You will see something similar to:
-
-```
-sb_publishable_xxxxxxxxxxxxxxxxxxxxxxxxx
-```
-
-Click the **Copy** icon.
-
-This key is safe to use in frontend applications.
-
----
-
-## Step 4: Copy the Project URL
+# Step 3: Get the Project URL
 
 Go to:
 
+```
 Settings → General
-
-Copy the **Project ID** or Project URL.
-
-The URL will look like:
-
 ```
-https://your-project-id.supabase.co
-```
+
+Copy the **Project URL**.
 
 Example:
 
@@ -64,27 +58,69 @@ https://spfyseexdmrffncyutno.supabase.co
 
 ---
 
-## Step 5: (Optional) Copy Secret Key
+# Step 4: Get PostgreSQL Database Connection Strings
 
-Go back to:
-
-Settings → API Keys
-
-Scroll down to **Secret keys**
-
-Copy:
+From the top navigation bar, click:
 
 ```
-sb_secret_xxxxxxxxxxxxxxxxxxxxx
+Connect
 ```
 
-⚠ Never expose this key in frontend code.
+A popup window will open.
 
-Use it only on the backend.
+Select:
+
+```
+ORMs
+```
+
+Scroll down to **Connection String**.
+
+You'll find two connection strings.
+
+### Transaction Pooler (Recommended for Applications)
+
+```env
+DATABASE_URL="postgresql://postgres.spfyseexdmrffncyutno:[YOUR-PASSWORD]@aws-1-ap-northeast-2.pooler.supabase.com:6543/postgres?pgbouncer=true"
+```
+
+### Session Pooler (Recommended for Migrations)
+
+```env
+DIRECT_URL="postgresql://postgres.spfyseexdmrffncyutno:[YOUR-PASSWORD]@aws-1-ap-northeast-2.pooler.supabase.com:5432/postgres"
+```
+
+> **Important:** Replace `[YOUR-PASSWORD]` with the database password you entered while creating the Supabase project.
 
 ---
 
-## Step 6: Create Environment File
+# Step 5: Get the Secret Key (Backend Only)
+
+Go to:
+
+```
+Settings → API Keys
+```
+
+Scroll to:
+
+```
+Secret Keys
+```
+
+Copy the Secret Key.
+
+Example:
+
+```
+sb_secret_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+⚠️ Never expose this key in frontend applications.
+
+---
+
+# Step 6: Create the Environment File
 
 Create a `.env` file in the project root.
 
@@ -95,23 +131,20 @@ VITE_SUPABASE_URL=https://your-project-id.supabase.co
 VITE_SUPABASE_ANON_KEY=sb_publishable_xxxxxxxxxxxxxxxxx
 ```
 
-### Next.js
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_xxxxxxxxxxxxxxxxx
-```
-
-### Node.js Backend
+### Node.js / Express / NestJS
 
 ```env
 SUPABASE_URL=https://your-project-id.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=sb_secret_xxxxxxxxxxxxxxxxx
+
+DATABASE_URL="postgresql://postgres.your-project-id:[YOUR-PASSWORD]@aws-1-region.pooler.supabase.com:6543/postgres?pgbouncer=true"
+
+DIRECT_URL="postgresql://postgres.your-project-id:[YOUR-PASSWORD]@aws-1-region.pooler.supabase.com:5432/postgres"
 ```
 
 ---
 
-## Step 7: Install Supabase Client
+# Step 7: Install Supabase Client
 
 ```bash
 npm install @supabase/supabase-js
@@ -119,7 +152,7 @@ npm install @supabase/supabase-js
 
 ---
 
-## Step 8: Create Supabase Client
+# Step 8: Create the Supabase Client
 
 ```javascript
 import { createClient } from "@supabase/supabase-js";
@@ -132,12 +165,10 @@ export const supabase = createClient(
 
 ---
 
-## Security Notes
+# Security Notes
 
-✅ Publishable Key → Frontend
-
-❌ Secret Key → Backend Only
-
-Never commit `.env` files to Git.
-
-Always add `.env` to `.gitignore`.
+- ✅ Publishable Key → Safe for frontend applications.
+- ❌ Secret Key → Backend only. Never commit it to Git.
+- ❌ Never commit your `.env` file.
+- ✅ Add `.env` to `.gitignore`.
+- 🔒 Store your database password securely, as it is required for `DATABASE_URL` and `DIRECT_URL`.
