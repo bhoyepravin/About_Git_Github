@@ -31,7 +31,9 @@ git pull origin prod
 # 4. Merge dev into prod
 git merge dev
 
-# 5. Push the merged prod branch
+# 5. :wq
+
+# 6. Push the merged prod branch
 git push origin prod
 
 ```
