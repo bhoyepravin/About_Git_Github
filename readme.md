@@ -31,7 +31,13 @@ git pull origin prod
 # 4. Merge dev into prod
 git merge dev
 
-# 5. :wq
+# 5. Save and Exit.
+:wq
+
+# What does :wq mean?
+# : → enter Vim command mode
+# w → write/save the file
+# q → quit Vim
 
 # 6. Push the merged prod branch
 git push origin prod
